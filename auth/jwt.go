@@ -2,6 +2,7 @@ package auth
 
 import (
 	"errors"
+	"gazes-auth/database"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -11,15 +12,8 @@ import (
 
 type UserClaim struct {
 	jwt.RegisteredClaims
-	Id int `json:"id"`
+	Id       int    `json:"id"`
 	Username string `json:"username"`
-}
-
-type DefaultUser struct {
-	Id int `json:"id"`
-	Username string `json:"username"`
-	Email string `json:"email"`
-	Password string `json:"password"`
 }
 
 type UserLogin struct {
@@ -29,21 +23,21 @@ type UserLogin struct {
 
 type UserRegister struct {
 	Username string `json:"username"`
-	Email string `json:"email"`
+	Email    string `json:"email"`
 	Password string `json:"password"`
 }
 
 var SecretToken = []byte("7c8mjYGG5H6VXyf6Zxqq6m69a2XNnPVC")
 
-func Sign(user DefaultUser) (string, error) {
+func Sign(user database.User) (string, error) {
 	claims := UserClaim{
-		Id: user.Id,
+		Id:       int(user.ID),
 		Username: user.Username,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(7 * 24 * time.Hour)),
-			Subject: "user",
-			Issuer: "admin",
-			IssuedAt: jwt.NewNumericDate(time.Now()),
+			Subject:   "user",
+			Issuer:    "admin",
+			IssuedAt:  jwt.NewNumericDate(time.Now()),
 		},
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
