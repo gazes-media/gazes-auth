@@ -17,7 +17,6 @@ func UserMeHandler(w http.ResponseWriter, r *http.Request, user *database.User) 
 	// send user in response, but without the password
 	response := UserMeResponse{Username: userModified.Username, Email: userModified.Email, ID: userModified.ID}
 	json.NewEncoder(w).Encode(response)
-	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 
 }
