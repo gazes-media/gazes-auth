@@ -3,38 +3,38 @@ package auth
 import (
 	"errors"
 	"gazes-auth/database"
+	"os"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 )
 
-// UserClaim is the expected format of the JWT token, it contains the user ID and username
+// UserClaim is the expected format of the JWT token, it contains the user ID and email
 type UserClaim struct {
 	jwt.RegisteredClaims
-	Id       uint   `json:"id"`
+	Id    uint   `json:"id"`
 	Email string `json:"email"`
 }
 
 // UserLogin is the expected format of the request body when logging in
 type UserLogin struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Email    string `json:"email" validate:"regexp=^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$"`
+	Password string `json:"password" validate:"min=8"`
 }
 
 // UserRegister is the expected format of the request body when registering
 type UserRegister struct {
-	Username string `json:"username"`
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Username string `json:"username" validate:"min=3,max=40,regexp=^[a-zA-Z0-9_]+$"`
+	Email    string `json:"email" validate:"regexp=^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$"`
+	Password string `json:"password" validate:"min=8"`
 }
 
-// SecretToken is the secret used to sign the JWT token, (it should be stored in an environment variable) #TODO: store in env var
-var SecretToken = []byte("7c8mjYGG5H6VXyf6Zxqq6m69a2XNnPVC")
+var SecretToken = []byte(os.Getenv("JWT_SECRET"))
 
 // Sign creates a JWT token from a user object
 func Sign(user database.User) (string, error) {
 	claims := UserClaim{
-		Id:       user.ID,
+		Id:    user.ID,
 		Email: user.Email,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(7 * 24 * time.Hour)),

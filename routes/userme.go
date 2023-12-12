@@ -7,21 +7,17 @@ import (
 )
 
 type UserMeResponse struct {
-	User database.User `json:"user"`
+	Username string `json:"username"`
+	Email    string `json:"email"`
+	ID       uint   `json:"id"`
 }
 
-func UserMeHandler(w http.ResponseWriter, r *http.Request) {
-	// get Token from request header
-	user, ok := AuthGuard(w, r)
-	if !ok {
-		jsonErr := ErrorResponse{Error: "Error getting user"}
-		jsonErr.Write(w, http.StatusInternalServerError)
-		return
-	}
+func UserMeHandler(w http.ResponseWriter, r *http.Request, user *database.User) {
 	userModified := database.User{Email: user.Email, Username: user.Username, Model: user.Model}
 	// send user in response, but without the password
-	response := UserMeResponse{User: userModified}
+	response := UserMeResponse{Username: userModified.Username, Email: userModified.Email, ID: userModified.ID}
+	json.NewEncoder(w).Encode(response)
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
+
 }

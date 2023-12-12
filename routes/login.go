@@ -3,10 +3,11 @@ package routes
 import (
 	"encoding/json"
 	"gazes-auth/auth"
-	"net/http"
 	"gazes-auth/database"
-)
+	"net/http"
 
+	"gopkg.in/validator.v2"
+)
 
 type LoginResponse struct {
 	Token string `json:"token"`
@@ -14,7 +15,7 @@ type LoginResponse struct {
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
-	r.Body.Close();
+	defer r.Body.Close()
 	// unmarshal request body
 	var user auth.UserLogin
 	err := json.NewDecoder(r.Body).Decode(&user)
@@ -22,7 +23,12 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-
+	err = validator.Validate(user)
+	if err != nil {
+		jsonErr := ErrorResponse{Error: "Invalid request body"}
+		jsonErr.Write(w, http.StatusBadRequest)
+		return
+	}
 	// check if user exists
 	u := database.User{Email: user.Email}
 	err = u.GetByEmail()
@@ -33,7 +39,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// check if password is correct
-	if !auth.ComparePassword(u.Password, user.Password) {
+	if !auth.ComparePassword(user.Password, u.Password) {
 		jsonErr := ErrorResponse{Error: "Invalid password"}
 		jsonErr.Write(w, http.StatusUnauthorized)
 		return
@@ -52,5 +58,5 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
-	
+
 }
