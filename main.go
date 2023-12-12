@@ -28,5 +28,7 @@ func main() {
 		Handler: r,
 	}
 
-	server.ListenAndServe()
+	if err := server.ListenAndServe(); err != nil {
+		panic(err)
+	}
 }
