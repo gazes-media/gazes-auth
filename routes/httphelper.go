@@ -38,7 +38,7 @@ func CheckHeader(w http.ResponseWriter, r *http.Request) bool {
 // This function is used to check if the user is authenticated, and if so, return the user.
 func AuthGuard(w http.ResponseWriter, r *http.Request) (*database.User, bool) {
 	tokenString := r.Header.Get("Authorization")
-	if CheckHeader(w, r) == false {
+	if !CheckHeader(w, r){
 		return nil, false
 	}
 	// We now need to extract the token from the string because it's a Bearer token

@@ -3,35 +3,36 @@ package routes
 import (
 	"encoding/json"
 	"gazes-auth/auth"
-	"net/http"
 	"gazes-auth/database"
+	"net/http"
+
+	"gopkg.in/validator.v2"
 )
 
 type RegisterResponse struct {
 	Token string `json:"token"`
 }
 
-
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 
-	r.Body.Close();
+	defer r.Body.Close()
 	// unmarshal request body
-	var user database.User
-	err := json.NewDecoder(r.Body).Decode(&user)
+	var userRegister auth.UserRegister
+	err := json.NewDecoder(r.Body).Decode(&userRegister)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-
-	// check if user exists
-	u := database.User{Email: user.Email, Username: user.Username, Password: auth.EncodePassword(user.Password)}
-	err = u.GetByEmail()
-	if err == nil {
-		jsonErr := ErrorResponse{Error: "User already exists"}
-		jsonErr.Write(w, http.StatusUnauthorized)
+	// validate request body fields
+	err = validator.Validate(userRegister)
+	if err != nil {
+		jsonErr := ErrorResponse{Error: "Invalid request body: " + err.Error()}
+		jsonErr.Write(w, http.StatusBadRequest)
 		return
 	}
 
+	// check if user exists
+	user := database.User{Email: userRegister.Email, Username: userRegister.Username, Password: auth.EncodePassword(userRegister.Password)}
 	// create user
 	err = user.Create()
 	if err != nil {
@@ -53,5 +54,5 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
-	
+
 }
