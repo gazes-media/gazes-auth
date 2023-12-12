@@ -6,7 +6,7 @@ import (
 )
 
 var DB *gorm.DB
-
+// Init initializes the database, creating a connection and a schema
 func Init() {
 	dsn := "host=149.91.80.94 user=postgres password=cPkG4^8gxgnPn& dbname=gazes-auth port=5432 sslmode=disable TimeZone=Europe/Paris"
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
@@ -14,4 +14,6 @@ func Init() {
 		panic(err)
 	}
 	DB = db
+
+	db.AutoMigrate(&User{})
 }
