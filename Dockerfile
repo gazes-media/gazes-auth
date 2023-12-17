@@ -69,6 +69,6 @@ COPY --from=build /app/server /app/
 EXPOSE 2634
 
 WORKDIR /app
-CMD [ "test=test",">",".env" ]
+RUN "echo '.env' >> .env"
 # What the container should run when it is started.
 ENTRYPOINT [ "./server" ]
