@@ -16,7 +16,7 @@ func init() {
 
 	err := godotenv.Load(".env")
 	if err != nil {
-		log.Panicf("Error loading .env file: %s", err)
+		log.Printf("Error loading .env file: %s", err)
 	}
 
 	utils.ValidateEnvVars([]string{"JWT_SECRET", "PORT", "PASSWORD_SALT"})
