@@ -69,6 +69,7 @@ COPY --from=build /app/server /app/
 EXPOSE 2634
 
 WORKDIR /app
-RUN "echo '.env' >> .env"
+# Create a default .env file if one does not exist.
+RUN if [ ! -f .env ]; then echo "PORT=2634" > .env; fi
 # What the container should run when it is started.
 ENTRYPOINT [ "./server" ]
