@@ -3,7 +3,7 @@ package repository
 import (
 	"errors"
 	"fmt"
-	"gazes-auth/src/model"
+	"gazes-auth/internal/model"
 	"os"
 	"time"
 

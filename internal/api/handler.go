@@ -3,9 +3,9 @@ package api
 import (
 	"encoding/json"
 	"fmt"
-	"gazes-auth/src/model"
-	"gazes-auth/src/repository"
-	"gazes-auth/src/utils"
+	"gazes-auth/internal/model"
+	"gazes-auth/internal/repository"
+	"gazes-auth/internal/utils"
 	"net/http"
 
 	"gopkg.in/validator.v2"

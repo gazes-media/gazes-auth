@@ -3,8 +3,8 @@ package api
 import (
 	"context"
 	"fmt"
-	"gazes-auth/src/repository"
-	"gazes-auth/src/utils"
+	"gazes-auth/internal/repository"
+	"gazes-auth/internal/utils"
 	"net/http"
 )
 

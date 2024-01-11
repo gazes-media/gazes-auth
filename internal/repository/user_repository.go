@@ -1,8 +1,8 @@
 package repository
 
 import (
-	"gazes-auth/src/model"
-	"gazes-auth/src/utils"
+	"gazes-auth/internal/model"
+	"gazes-auth/internal/utils"
 )
 
 // GetUserByID returns a user by their ID.
