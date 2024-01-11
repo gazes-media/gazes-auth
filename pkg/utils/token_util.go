@@ -1,9 +1,10 @@
-package repository
+package utils
 
 import (
 	"errors"
 	"fmt"
-	"gazes-auth/src/model"
+	"gazes-auth/internal/api/payloads"
+	"gazes-auth/internal/database/models"
 	"os"
 	"time"
 
@@ -13,8 +14,8 @@ import (
 // Sign generates a signed JWT token for the given user.
 // It takes a user model as input and returns the signed token as a string.
 // If an error occurs during the signing process, it is also returned.
-func SignJWT(user model.User) (string, error) {
-	claims := model.TokenPayload{
+func SignJWT(user models.User) (string, error) {
+	claims := payloads.TokenPayload{
 		ID:    user.ID,
 		Email: user.Email,
 		RegisteredClaims: jwt.RegisteredClaims{
@@ -30,8 +31,8 @@ func SignJWT(user model.User) (string, error) {
 	return token.SignedString([]byte(os.Getenv("JWT_SECRET")))
 }
 
-func VerifyJWT(tokenString string) (*model.TokenPayload, error) {
-	claims := &model.TokenPayload{}
+func VerifyJWT(tokenString string) (*payloads.TokenPayload, error) {
+	claims := &payloads.TokenPayload{}
 	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
 		return []byte(os.Getenv("JWT_SECRET")), nil
 	})

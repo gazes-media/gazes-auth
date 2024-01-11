@@ -1,10 +1,10 @@
-package api
+package router
 
 import (
 	"context"
 	"fmt"
-	"gazes-auth/src/repository"
-	"gazes-auth/src/utils"
+	"gazes-auth/internal/database/repositories"
+	"gazes-auth/pkg/utils"
 	"net/http"
 )
 
@@ -29,7 +29,7 @@ func AuthMiddleware(next http.Handler) http.Handler {
 		token := authHeader[7:]
 		fmt.Println(token)
 
-		payload, err := repository.VerifyJWT(token)
+		payload, err := utils.VerifyJWT(token)
 
 		if err != nil {
 			utils.RespondJSON(w, map[string]string{
@@ -39,7 +39,7 @@ func AuthMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
-		user, err := repository.GetUserByID(payload.ID)
+		user, err := repositories.GetUserByID(payload.ID)
 
 		if err != nil {
 			utils.RespondJSON(w, map[string]string{

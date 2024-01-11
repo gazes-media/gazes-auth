@@ -1,13 +1,13 @@
-package repository
+package repositories
 
 import (
-	"gazes-auth/src/model"
-	"gazes-auth/src/utils"
+	"gazes-auth/internal/database/models"
+	"gazes-auth/pkg/utils"
 )
 
 // GetUserByID returns a user by their ID.
-func GetUserByID(userID uint) (*model.User, error) {
-	var user model.User
+func GetUserByID(userID uint) (*models.User, error) {
+	var user models.User
 	if err := utils.GetDB().First(&user, userID).Error; err != nil {
 		return nil, err
 	}
@@ -16,8 +16,8 @@ func GetUserByID(userID uint) (*model.User, error) {
 }
 
 // GetUserByEmail returns a user by their email address.
-func GetUserByEmail(email string) (*model.User, error) {
-	var user model.User
+func GetUserByEmail(email string) (*models.User, error) {
+	var user models.User
 	if err := utils.GetDB().First(&user, "email = ?", email).Error; err != nil {
 		return nil, err
 	}
@@ -26,7 +26,7 @@ func GetUserByEmail(email string) (*model.User, error) {
 }
 
 // CreateUser creates a new user in the database.
-func CreateUser(user *model.User) error {
+func CreateUser(user *models.User) error {
 	if err := utils.GetDB().Create(user).Error; err != nil {
 		return err
 	}
